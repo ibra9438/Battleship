@@ -1,10 +1,10 @@
 const ship = (length, startSquare) => {
   const hitSquares = [];
-  const shipCoordinates = [startSquare];
+  let shipLocation = [startSquare];
 
   // add horizontal coordinates
   for (let i = 1; i < length; i++) {
-    shipCoordinates.push(startSquare + i);
+    shipLocation.push(startSquare + i);
   }
 
   const hit = (number) => {
@@ -20,9 +20,9 @@ const ship = (length, startSquare) => {
 
   return {
     hitSquares,
-    shipCoordinates,
+    shipLocation,
     hit,
     isSunk,
   };
 };
-export default ship;
+exports.ship = ship;
