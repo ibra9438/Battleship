@@ -2,6 +2,7 @@ const { ship } = require("../src/shipFactory");
 const gameBoard = () => {
   const shipsArr = [];
   const shipCoordinates = [];
+  const missedHits = [];
 
   let newShip;
 
@@ -11,20 +12,13 @@ const gameBoard = () => {
     return newShip;
   };
 
-  const setCoordinates = () => {
+  const __setCoordinates = () => {
     shipCoordinates.push(newShip.shipCoordinates);
   };
-
+  // check if any ship has a hit
   const recieveAttack = (square) => {
-    shipsArr.forEach((e) => {
-      if (e.hit() === true) {
-        // color the corrospanding grid red
-        console.log("hit");
-      } else {
-        // color the missed shot
-        console.log("miss");
-      }
-    });
+    const hit = shipsArr.some((e) => e.hit(square));
+    return hit;
   };
 
   const allShipsSunk = () => {
@@ -36,8 +30,16 @@ const gameBoard = () => {
     });
     if (sunkCounter === shipsArr.length) {
       console.log("all ships have been sunk");
+      return true;
     }
+    return false;
   };
-  return { createShip, setCoordinates, recieveAttack, allShipsSunk };
+
+  return {
+    allShipsSunk,
+    recieveAttack,
+    createShip,
+    shipCoordinates,
+  };
 };
 exports.gameBoard = gameBoard;
