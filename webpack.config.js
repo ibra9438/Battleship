@@ -1,7 +1,9 @@
 const path = require("path");
+const ESLintPlugin = require("eslint-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
+  mode: "development",
   entry: {
     index: "./src/app.js",
   },
@@ -11,6 +13,7 @@ module.exports = {
       title: "Battleship",
       template: "./src/index.html",
     }),
+    new ESLintPlugin(),
   ],
   module: {
     rules: [
@@ -24,9 +27,12 @@ module.exports = {
           },
         },
       },
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
+      },
     ],
   },
-
   output: {
     filename: "main.js",
     path: path.resolve(__dirname, "dist"),
