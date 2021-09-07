@@ -1,18 +1,17 @@
-import './style.css';
-
-const { gameBoard } = require('./Gameboard');
-const { player } = require('./Player');
-const { createGrid } = require('./dom');
+import "./style.css";
+const { ship } = require("./shipFactory");
+const { gameBoard } = require("./Gameboard");
+const { player } = require("./Player");
+const { controlGrid } = require("./dom");
 
 // TODO: player name;
-const humanPlayer = player('Ibrahim');
+const humanPlayer = player("Ibrahim");
 const pcPlayer = player();
 
-const humanBoard = gameBoard();
-const pcBoard = gameBoard();
-
+const board = gameBoard();
 // create a grid
-createGrid.init();
+controlGrid.init();
+const humanShip = board.createShip();
+const pcShip = board.createShip(false);
 
-const humanShip = humanBoard.createShip(4, 0);
-const pcShip = pcBoard.createShip(4, 5);
+controlGrid.hitListen(board);
