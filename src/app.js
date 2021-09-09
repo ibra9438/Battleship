@@ -1,5 +1,4 @@
 import "./style.css";
-const { ship } = require("./shipFactory");
 const { gameBoard } = require("./Gameboard");
 const { player } = require("./Player");
 const { controlGrid } = require("./dom");
@@ -8,10 +7,13 @@ const { controlGrid } = require("./dom");
 const humanPlayer = player("Ibrahim");
 const pcPlayer = player();
 
-const board = gameBoard();
+const board = gameBoard(humanPlayer, pcPlayer);
 // create a grid
 controlGrid.init();
-const humanShip = board.createShip();
-const pcShip = board.createShip(false);
-
-controlGrid.hitListen(board);
+// create player ship
+// listen to board
+controlGrid.hitControl(board);
+// TODO: implement reset,
+// TODO: drag and drop,
+// TODO: fix spaghetti code with pen and paper
+// TODO: testing

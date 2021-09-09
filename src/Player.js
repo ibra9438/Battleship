@@ -1,27 +1,39 @@
-const { gameBoard } = require("../src/Gameboard");
 const player = (name = "PC") => {
   // attack, Pc Attack
   const playerHits = [];
-  const pcHits = [];
+  const playerShips = [];
 
-  const returnName = () => name;
+  let randomNumber;
 
-  const attack = (number) => {
-    if (!playerHits.includes(number)) {
-      playerHits.push(number);
-      return number;
+  const returnNum = () => randomNumber;
+
+  const attack = (
+    elements,
+    flag = true,
+    board,
+    number = undefined
+  ) => {
+    if (flag) {
+      if (!playerHits.includes(number)) {
+        playerHits.push(number);
+        return number;
+      }
+      return false;
+    } else {
+      let hit = false;
+      while (hit == false) {
+        randomNumber = Math.floor(Math.random() * 100) + 1;
+        if (!playerHits.includes(randomNumber)) {
+          playerHits.push(randomNumber);
+          hit = true;
+          return randomNumber;
+        }
+      }
     }
-    return false;
   };
-
-  const pcAttack = () => {
-    const number = Math.floor(Math.random() * 100);
-  };
-
   return {
     attack,
-    pcAttack,
-    returnName,
+    returnNum,
   };
 };
 exports.player = player;
