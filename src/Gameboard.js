@@ -2,84 +2,135 @@ const { ship } = require("./shipFactory");
 const { controlGrid } = require("./dom");
 
 const gameBoard = (player, pc) => {
-  const shipsPlayerArr = [];
-  const shipsPcArr = [];
+  const playerBoard = [];
+  const pcBoard = [];
+  const shipsArr = [];
+  const shipsArrPc = [];
+
+  const shipSize = [5, 4, 3, 3, 2];
+  let newShip;
 
   const missedPlayerHits = [];
   const missedPcHits = [];
 
   let turn = 0;
-
-  const getPlayer = () => player;
-  const getPc = () => pc;
-
   const getTurn = () => turn;
   const setTurn = () => turn++;
 
-  let newShip;
-  let shipSize = [5, 4, 3, 3, 2];
-
-  // check if any ship has a hit
-  const recieveAttack = (square) => {
-    square = parseInt(square);
-
-    if (getTurn() % 2 == 0) {
-      const hit = shipsPcArr.some((e) => e.hit(square));
-      if (hit) {
-        return true;
-      }
-      missedPlayerHits.push(square);
-      return false;
-    } else {
-      const hit = shipsPlayerArr.some((e) => e.hit(square));
-      if (hit) {
-        return true;
-      }
-      missedPcHits.push(square);
-      return false;
-    }
-  };
-
-  const allShipsSunk = () => {
-    let sunkPlayerCounter = 0;
-    let sunkPcCounter = 0;
-    if (getTurn() % 2 == 0) {
-      shipsPlayerArr.forEach((e) => {
-        if (e.isSunk()) sunkPlayerCounter++;
-      });
-      if (sunkPlayerCounter === shipsPlayerArr.length) {
-        return true;
-      }
-      return false;
-    } else {
-      if (getTurn() % 2 == 1) {
-        shipsPcArr.forEach((e) => {
-          if (e.isSunk()) sunkPcCounter++;
-        });
-        if (sunkPcCounter === shipsPcArr.length) {
-          return true;
-        }
-        return false;
+  const __initShipArr = () => {
+    for (let i = 0; i < 10; i++) {
+      shipsArr.push([]);
+      shipsArrPc.push([]);
+      for (let j = 0; j < 3; j++) {
+        shipsArr[i].push(null);
+        shipsArrPc[i].push(null);
       }
     }
+    console.log(shipsArr);
   };
-  const resetBoard = () => {
-    shipsPcArr.length = 0;
-    shipsPlayerArr.length = 0;
-    missedPlayerHits.length = 0;
-    missedPcHits.length = 0;
+  const __testingShip = () => {
+    for (let j = 0; j < 5; j++) {
+      playerBoard[0][j].classList.add("activePlayer");
+    }
+    newShip = ship(5);
+    shipsArr[0].push(newShip);
+    console.log(shipsArr);
+  };
+  const init = () => {
+    controlGrid.init(pcBoard, playerBoard);
+    __testingShip();
+  };
+  const __checkActive = (
+    randomNumberY,
+    randomNumberX,
+    length,
+    orientation
+  ) => {
+    let legalValue;
+    let legalRule = (a) => a.className !== "element activePlayer";
+    if (orientation === "horizontal") {
+      return (legalValue = pcBoard[randomNumberY].every((a) =>
+        legalRule(a)
+      ));
+    } else {
+      const filteredArr = [];
+      for (let i = 0; i < length; i++) {
+        filteredArr.push(pcBoard[randomNumberY + i][randomNumberX]);
+      }
+      return (legalValue = filteredArr.every((a) => legalRule(a)));
+    }
+  };
+  const renderPcShip = () => {
+    let randomNumberX;
+    let randomNumberY;
+    let orientation = ["vertical", "horizontal"];
+    let orientationValue;
+    let legalMove = true;
+    shipSize.forEach((e) => {
+      orientationValue =
+        orientation[Math.floor(Math.random() * 9) % 2];
+      if (orientationValue == "horizontal") {
+        do {
+          randomNumberX = Math.floor(Math.random() * 10);
+          randomNumberY = Math.floor(Math.random() * 10);
 
-    turn = 0;
+          if (randomNumberX + e <= 9) {
+            legalMove = __checkActive(
+              randomNumberY,
+              randomNumberX,
+              e,
+              orientationValue
+            );
+          }
+        } while (randomNumberX + e >= 9 || !legalMove);
+
+        controlGrid.renderPcShip(
+          pcBoard,
+          e,
+          randomNumberX,
+          randomNumberY
+        );
+      } else {
+        do {
+          randomNumberX = Math.floor(Math.random() * 10);
+          randomNumberY = Math.floor(Math.random() * 10);
+          if (randomNumberY + e <= 9) {
+            legalMove = __checkActive(
+              randomNumberY,
+              randomNumberX,
+              e,
+              orientationValue
+            );
+          }
+        } while (randomNumberY + e >= 9 || !legalMove);
+        controlGrid.renderPcShip(
+          pcBoard,
+          e,
+          randomNumberX,
+          randomNumberY,
+          false
+        );
+      }
+    });
+  };
+  const showLegalPcGrid = (e) => {
+    controlGrid.showIfLegal(e);
   };
 
+  const dragAndDrop = () => {};
+  const recieveAttack = (x, y) => {
+    if (getTurn() % 2 === 0) {
+      playerBoard.forEach((e) => {});
+    }
+  };
+  __initShipArr();
   return {
-    allShipsSunk,
-    recieveAttack,
-    getTurn,
-    setTurn,
-    getPlayer,
-    getPc,
-    resetBoard,
+    init,
+    renderPcShip,
+    dragAndDrop,
+    pcBoard,
+    playerBoard,
+    showLegalPcGrid,
   };
 };
 exports.gameBoard = gameBoard;

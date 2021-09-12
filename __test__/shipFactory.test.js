@@ -1,17 +1,21 @@
 const { ship } = require("../src/shipFactory");
 
-const newShip = ship(4, 0);
-
-for (let i = 0; i < 4; i++) {
-  newShip.hit(i);
-}
-
-test("test if hitSquares is being pushed", () => {
-  expect(newShip.hitSquares.length).toBe(4);
-});
-
-test("test ship isSunk", () => {
-  expect(newShip.isSunk()).toBe(true);
-});
-
 // finish testing all of the object public methods and properties
+describe("testing ship methods", () => {
+  let newShip;
+  beforeEach(() => {
+    newShip = ship(3);
+  });
+  test("test if hit", () => {
+    newShip.hit(1);
+    newShip.hit(2);
+    newShip.hit(3);
+    expect(newShip.hitLocation.length).toBe(3);
+  });
+  test("test if ship is sunk", () => {
+    newShip.hit(1);
+    newShip.hit(2);
+    newShip.hit(3);
+    expect(newShip.isSunk()).toBeTruthy();
+  });
+});

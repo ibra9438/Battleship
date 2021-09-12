@@ -1,43 +1,28 @@
-const ship = (length, startSquare) => {
-  const hitSquares = [];
-  const shipLocation = [];
-
-  // return length
-  const returnlength = () => length;
-
-  // add horizontal coordinates
-  const __setCoordinates = () => {
-    for (let i = 0; i < length; i++) {
-      shipLocation.push(startSquare + i);
-    }
-  };
-  // return location of ship
-  const location = () => shipLocation;
-
+const ship = (length, start, flag) => {
+  const hits = [];
+  const shipCoordinates = [];
   const hit = (number) => {
-    if (shipLocation.includes(number) === true) {
-      hitSquares.push(number);
-      return true;
-    }
-    return false;
+    hits.push(number);
   };
-
   const isSunk = () => {
-    if (hitSquares.length === length) {
+    if (hitLocation.length === length) {
       return true;
     }
     return false;
   };
 
-  __setCoordinates(startSquare);
-
-  return {
-    hitSquares,
-    shipLocation,
-    hit,
-    isSunk,
-    location,
-    returnlength,
-  };
+  /*const __setCoordinates = () {
+    if (flag) {
+      for (let i = 0; i < length + start; i++) {
+        shipCoordinates.push(start + i);
+      } else {
+        for (let i = 0; i < length + start; i++) {
+          ship
+          shipCoordinates.push(start + i);
+        }
+      }
+    }
+  } */
+  return { hit, isSunk, hits };
 };
 exports.ship = ship;
