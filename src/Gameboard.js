@@ -4,6 +4,7 @@ const { controlGrid } = require("./dom");
 const gameBoard = (player, pc) => {
   const playerBoard = [];
   const pcBoard = [];
+
   const shipsArr = [];
   const shipsArrPc = [];
 
@@ -14,31 +15,12 @@ const gameBoard = (player, pc) => {
   const missedPcHits = [];
 
   let turn = 0;
+  let gameOn = true;
   const getTurn = () => turn;
   const setTurn = () => turn++;
 
-  const __initShipArr = () => {
-    for (let i = 0; i < 10; i++) {
-      shipsArr.push([]);
-      shipsArrPc.push([]);
-      for (let j = 0; j < 3; j++) {
-        shipsArr[i].push(null);
-        shipsArrPc[i].push(null);
-      }
-    }
-    console.log(shipsArr);
-  };
-  const __testingShip = () => {
-    for (let j = 0; j < 5; j++) {
-      playerBoard[0][j].classList.add("activePlayer");
-    }
-    newShip = ship(5);
-    shipsArr[0].push(newShip);
-    console.log(shipsArr);
-  };
   const init = () => {
     controlGrid.init(pcBoard, playerBoard);
-    __testingShip();
   };
   const __checkActive = (
     randomNumberY,
@@ -84,6 +66,8 @@ const gameBoard = (player, pc) => {
           }
         } while (randomNumberX + e >= 9 || !legalMove);
 
+        newShip = ship(e, randomNumberX, randomNumberY, false);
+        shipsArrPc.push(newShip);
         controlGrid.renderPcShip(
           pcBoard,
           e,
@@ -103,6 +87,8 @@ const gameBoard = (player, pc) => {
             );
           }
         } while (randomNumberY + e >= 9 || !legalMove);
+        newShip = ship(e, randomNumberX, randomNumberY, true);
+        shipsArrPc.push(newShip);
         controlGrid.renderPcShip(
           pcBoard,
           e,
@@ -113,22 +99,135 @@ const gameBoard = (player, pc) => {
       }
     });
   };
-  const showLegalPcGrid = (e) => {
-    controlGrid.showIfLegal(e);
-  };
-
-  const dragAndDrop = () => {};
-  const recieveAttack = (x, y) => {
-    if (getTurn() % 2 === 0) {
-      playerBoard.forEach((e) => {});
+  const showLegalPcGrid = (e, flag) => {
+    if (flag) {
+      controlGrid.showIfLegal(e, true);
+    } else {
+      controlGrid.showIfLegal(e, false);
     }
   };
-  __initShipArr();
+  const dragAndDrop = (e, flag) => {
+    let arr = [];
+    controlGrid.dragAndDrop(e, flag);
+  };
+  const loadPlayerShip = (a) => {
+    let values;
+    if (shipSize.length > 0) {
+      values = controlGrid.loadShip(a);
+      if (values !== false) {
+        newShip = ship(
+          parseInt(shipSize[0]),
+          parseInt(values[1]),
+          parseInt(values[0])
+        );
+        shipsArr.push(newShip);
+        shipSize.shift();
+      }
+    }
+  };
+  const recieveAttack = (x, y, a) => {
+    let value = false;
+    if (gameOn) {
+      if (getTurn() % 2 === 0) {
+        shipsArrPc.forEach((e) => {
+          if (e.isHit(y, x) == true) {
+            e.hit(1);
+            controlGrid.markHit(a, true);
+            value = true;
+            allShipsSunk(true);
+          }
+        });
+        if (value == false) {
+          controlGrid.markHit(a, false);
+          missedPlayerHits.push([x, y]);
+          allShipsSunk();
+        }
+        setTurn();
+      }
+    }
+    if (gameOn) {
+      if (getTurn() % 2 !== 0) {
+        value = false;
+        let pcAttack = pc.pcAttack();
+        let element;
+        shipsArr.forEach((e) => {
+          if (e.isHit(pcAttack[0], pcAttack[1]) == true) {
+            e.hit(1);
+            element = playerBoard[pcAttack[0]][pcAttack[1]];
+            controlGrid.switchName(getTurn());
+            setTimeout(() => {
+              controlGrid.markHit(element, true);
+              allShipsSunk(false);
+              setTurn();
+              controlGrid.switchName(getTurn());
+            }, 20);
+            value = true;
+          }
+        });
+        if (value == false) {
+          element = playerBoard[pcAttack[0]][pcAttack[1]];
+          controlGrid.switchName(getTurn());
+          setTimeout(() => {
+            controlGrid.markHit(element, false);
+            setTurn();
+            controlGrid.switchName(getTurn());
+          }, 20);
+          missedPcHits.push([pcAttack[0], pcAttack[1]]);
+        }
+      }
+    }
+    return value;
+  };
+  const allShipsSunk = (flag) => {
+    let pcSunkCounter = 0;
+    let playerSunkCounter = 0;
+    if (flag) {
+      shipsArrPc.forEach((e) => {
+        if (e.isSunk() == true) {
+          pcSunkCounter++;
+        }
+      });
+    } else {
+      shipsArr.forEach((e) => {
+        if (e.isSunk() == true) {
+          playerSunkCounter++;
+        }
+      });
+    }
+    if (shipsArr.length === playerSunkCounter) {
+      __checkWinner(false);
+    }
+    if (shipsArrPc.length === pcSunkCounter) {
+      __checkWinner(true);
+    }
+  };
+  const __checkWinner = (flag) => {
+    if (flag) {
+      controlGrid.checkWinner(flag);
+    } else {
+      controlGrid.checkWinner(flag);
+    }
+    gameOn = false;
+    setTimeout(() => {
+      __reset();
+    }, 2000);
+  };
+  const __reset = () => {
+    controlGrid.reset();
+    turn = 0;
+    controlGrid.switchName(turn);
+    renderPcShip();
+    // __testingShip();
+    gameOn = true;
+  };
   return {
     init,
+    getTurn,
+    recieveAttack,
     renderPcShip,
     dragAndDrop,
     pcBoard,
+    loadPlayerShip,
     playerBoard,
     showLegalPcGrid,
   };

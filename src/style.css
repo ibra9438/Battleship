@@ -11,6 +11,7 @@
 }
 body {
   background: hsla(0, 6%, 90%, 0.363);
+  font-family: "MyFont", sans-serif;
 }
 h1 {
   font-size: 4rem;
@@ -50,18 +51,26 @@ h1 {
 }
 .legal {
   background: rgb(140, 248, 146);
+  cursor: pointer;
 }
 .illegal {
   cursor: not-allowed;
 }
 .activePlayer {
   background: rgb(195, 170, 170);
+  cursor: pointer;
 }
 .hit {
   background: green;
+  cursor: not-allowed;
+}
+.aim {
+  background: rgb(92, 92, 197);
+  cursor: pointer;
 }
 .miss {
   background: rgb(243, 111, 3);
+  cursor: not-allowed;
 }
 .modal-container {
   position: fixed;
@@ -94,6 +103,10 @@ h1 {
   letter-spacing: 1px;
   font-weight: 400;
   font-family: "MyFont", sans-serif;
+}
+.currentPLayer {
+  width: 5rem;
+  color: hsl(206, 95%, 64%);
 }
 input {
   padding: 0.6rem 0.4rem;
