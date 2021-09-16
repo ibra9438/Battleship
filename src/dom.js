@@ -1,31 +1,38 @@
 const { gameBoard } = require("./Gameboard");
 const controlGrid = (() => {
-  const shipSize = [5, 4, 3, 3, 2];
+  let shipSize = [5, 4, 3, 3, 2];
   const filteredArr = [];
+
   const playerGrid = document.querySelectorAll(
     ".battle-grid:nth-child(1)"
   );
   const pcGrid = document.querySelectorAll(
     ".battle-grid:nth-child(2)"
   );
+
   const rotation = document.querySelector(".rotation");
+
   let rotationStatus = 0;
   rotation.addEventListener("click", () => {
     rotationStatus++;
   });
+
   let pcElements;
   let playerElements;
 
   let doublePcElements = [];
   let doublePlayerElements = [];
+
   const modalContainer = document.querySelector(".modal-container");
   const playerNameForm = document.forms["playerName"];
+
   playerNameForm.addEventListener("submit", (e) => {
     e.preventDefault();
     switchName(0);
     modalContainer.classList.remove("modal-container");
     modalContainer.classList.add("modal-container-hidden");
   });
+
   const input = document.querySelector("#formText");
   const currentPlayer = document.querySelector(".currentPlayer");
 
@@ -84,40 +91,50 @@ const controlGrid = (() => {
         );
       }
     }
+    controlPcShipView(false, undefined, pcBoard);
   };
-
+  const controlPcShipView = (
+    flag,
+    shipCoordinates = undefined,
+    board
+  ) => {
+    board.forEach((e) => {
+      e.forEach((a) => {
+        if (a.className == "element activePlayer") {
+          a.classList.add("hidden");
+        }
+        if (flag) {
+          shipCoordinates.forEach((e) => {
+            board.forEach((a) => {
+              a.forEach((s) => {
+                if (
+                  parseInt(s.getAttribute("data-index-v")) == e[0] &&
+                  parseInt(s.getAttribute("data-index-h")) == e[1]
+                ) {
+                  s.classList.add("sunk");
+                }
+              });
+            });
+          });
+        }
+      });
+    });
+  };
   const showIfLegal = (e, flag) => {
     e.addEventListener("mouseout", () => {
-      e.classList.remove("pcTurn");
       e.classList.remove("legal");
       e.classList.remove("illegal");
-      e.classList.remove("aim");
     });
-    if (flag == false) {
-      e.classList.add("pcTurn");
-    }
     let currentClassName = e.className;
-
-    if (currentClassName != "element activePlayer") {
-      e.classList.remove("illegal");
-      e.classList.remove("aim");
-
-      e.classList.add("legal");
-    }
-    if (
-      currentClassName == "element miss" ||
-      currentClassName == "element activePlayer hit"
-    ) {
+    if (flag) {
+      if (
+        currentClassName == "element miss" ||
+        currentClassName == "element activePlayer hit"
+      ) {
+        e.classList.add("illegal");
+      }
+    } else {
       e.classList.add("illegal");
-      e.classList.remove("aim");
-      e.classList.remove("pcTurn");
-    }
-    if (currentClassName == "element activePlayer") {
-      e.classList.add("aim");
-      e.classList.remove("legal");
-      e.classList.remove("illegal");
-      e.classList.remove("hit");
-      e.classList.remove("pcTurn");
     }
   };
   const markHit = (a, hitFlag) => {
@@ -126,13 +143,13 @@ const controlGrid = (() => {
       a.classList.remove("legal");
       a.classList.remove("miss");
       a.classList.remove("illegal");
-
+      a.classList.remove("pcTurn");
       a.classList.add("hit");
+      a.classList.remove("hidden");
     } else {
       a.classList.remove("aim");
       a.classList.remove("legal");
       a.classList.remove("illegal");
-
       a.classList.add("miss");
     }
   };
@@ -272,7 +289,7 @@ const controlGrid = (() => {
         true,
       ];
     }
-    if (!legal == false) {
+    if (!legal == true) {
       alert("can't place ship here");
       return false;
     }
@@ -305,6 +322,7 @@ const controlGrid = (() => {
     playerElements.forEach((e) => {
       e.classList.remove("hit", "legal", "miss", "activePlayer");
     });
+    shipSize = [5, 4, 3, 3, 2];
   };
   return {
     init,
@@ -317,6 +335,7 @@ const controlGrid = (() => {
     loadShip,
     dragAndDrop,
     switchName,
+    controlPcShipView,
   };
 })();
 exports.controlGrid = controlGrid;

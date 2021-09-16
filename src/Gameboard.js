@@ -8,7 +8,7 @@ const gameBoard = (player, pc) => {
   const shipsArr = [];
   const shipsArrPc = [];
 
-  const shipSize = [5, 4, 3, 3, 2];
+  let shipSize = [5, 4, 3, 3, 2];
   let newShip;
 
   const missedPlayerHits = [];
@@ -18,7 +18,7 @@ const gameBoard = (player, pc) => {
   let gameOn = true;
   const getTurn = () => turn;
   const setTurn = () => turn++;
-
+  const getShipSizeLength = () => shipSize.length;
   const init = () => {
     controlGrid.init(pcBoard, playerBoard);
   };
@@ -29,7 +29,9 @@ const gameBoard = (player, pc) => {
     orientation
   ) => {
     let legalValue;
-    let legalRule = (a) => a.className !== "element activePlayer";
+    let legalRule = (a) =>
+      a.className !== "element activePlayer" &&
+      a.className !== "element activePlayer hidden";
     if (orientation === "horizontal") {
       return (legalValue = pcBoard[randomNumberY].every((a) =>
         legalRule(a)
@@ -140,7 +142,6 @@ const gameBoard = (player, pc) => {
         if (value == false) {
           controlGrid.markHit(a, false);
           missedPlayerHits.push([x, y]);
-          allShipsSunk();
         }
         setTurn();
       }
@@ -185,12 +186,22 @@ const gameBoard = (player, pc) => {
       shipsArrPc.forEach((e) => {
         if (e.isSunk() == true) {
           pcSunkCounter++;
+          controlGrid.controlPcShipView(
+            true,
+            e.shipCoordinates,
+            pcBoard
+          );
         }
       });
     } else {
       shipsArr.forEach((e) => {
         if (e.isSunk() == true) {
           playerSunkCounter++;
+          controlGrid.controlPcShipView(
+            true,
+            e.shipCoordinates,
+            playerBoard
+          );
         }
       });
     }
@@ -215,6 +226,8 @@ const gameBoard = (player, pc) => {
   const __reset = () => {
     controlGrid.reset();
     turn = 0;
+    shipSize = [5, 4, 3, 3, 2];
+    shipsArr.length = 0;
     controlGrid.switchName(turn);
     renderPcShip();
     // __testingShip();
@@ -227,6 +240,7 @@ const gameBoard = (player, pc) => {
     renderPcShip,
     dragAndDrop,
     pcBoard,
+    getShipSizeLength,
     loadPlayerShip,
     playerBoard,
     showLegalPcGrid,

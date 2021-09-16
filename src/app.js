@@ -37,18 +37,22 @@ pcBoard.forEach((e) => {
   e.forEach((a) => {
     a.addEventListener("mouseover", () => {
       if (board.getTurn() % 2 == 0) {
-        board.showLegalPcGrid(a);
+        board.showLegalPcGrid(a, true);
       } else {
         board.showLegalPcGrid(a, false);
       }
     });
     a.addEventListener("click", () => {
+      length = board.getShipSizeLength();
       if (
+        length == 0 &&
         a.className !== "element hit" &&
         a.className !== "element miss" &&
         a.className !== "element illegal" &&
+        a.className !== "element activePlayer hit illegal" &&
         a.className !== "element miss illegal" &&
         a.className !== "element activePlayer hit" &&
+        a.className !== "element activePlayer hit legal" &&
         board.getTurn() % 2 == 0
       ) {
         board.recieveAttack(
