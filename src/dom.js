@@ -2,7 +2,7 @@ const { gameBoard } = require("./Gameboard");
 const controlGrid = (() => {
   let shipSize = [5, 4, 3, 3, 2];
   const filteredArr = [];
-
+  const audio = document.querySelector("audio");
   const playerGrid = document.querySelectorAll(
     ".battle-grid:nth-child(1)"
   );
@@ -296,12 +296,14 @@ const controlGrid = (() => {
   };
   const switchName = (turn) => {
     if (turn % 2 == 0) {
-      currentPlayer.innerText = input.value;
+      currentPlayer.innerText = `${input.value}`;
     } else {
       currentPlayer.innerText = "PC";
     }
   };
   const firing = (flag) => {
+    audio.currentTime = 0;
+    audio.play();
     if (flag) {
       currentPlayer.innerText = `${input.value} is firing`;
     } else {
@@ -336,6 +338,7 @@ const controlGrid = (() => {
     dragAndDrop,
     switchName,
     controlPcShipView,
+    firing,
   };
 })();
 exports.controlGrid = controlGrid;

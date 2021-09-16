@@ -109,7 +109,6 @@ const gameBoard = (player, pc) => {
     }
   };
   const dragAndDrop = (e, flag) => {
-    let arr = [];
     controlGrid.dragAndDrop(e, flag);
   };
   const loadPlayerShip = (a) => {
@@ -133,6 +132,9 @@ const gameBoard = (player, pc) => {
       if (getTurn() % 2 === 0) {
         shipsArrPc.forEach((e) => {
           if (e.isHit(y, x) == true) {
+            setTimeout(() => {
+              controlGrid.firing(true);
+            }, 1000);
             e.hit(1);
             controlGrid.markHit(a, true);
             value = true;
@@ -140,6 +142,9 @@ const gameBoard = (player, pc) => {
           }
         });
         if (value == false) {
+          setTimeout(() => {
+            controlGrid.firing(true);
+          }, 1000);
           controlGrid.markHit(a, false);
           missedPlayerHits.push([x, y]);
         }
@@ -153,27 +158,33 @@ const gameBoard = (player, pc) => {
         let element;
         shipsArr.forEach((e) => {
           if (e.isHit(pcAttack[0], pcAttack[1]) == true) {
-            e.hit(1);
-            element = playerBoard[pcAttack[0]][pcAttack[1]];
-            controlGrid.switchName(getTurn());
             setTimeout(() => {
-              controlGrid.markHit(element, true);
-              allShipsSunk(false);
-              setTurn();
-              controlGrid.switchName(getTurn());
-            }, 20);
-            value = true;
+              e.hit(1);
+              element = playerBoard[pcAttack[0]][pcAttack[1]];
+              controlGrid.firing(false);
+              setTimeout(() => {
+                controlGrid.markHit(element, true);
+                controlGrid.switchName(getTurn());
+                allShipsSunk(false);
+                setTurn();
+                controlGrid.switchName(getTurn());
+              }, 2000);
+              value = true;
+            }, 1000);
           }
         });
         if (value == false) {
-          element = playerBoard[pcAttack[0]][pcAttack[1]];
-          controlGrid.switchName(getTurn());
           setTimeout(() => {
-            controlGrid.markHit(element, false);
-            setTurn();
+            element = playerBoard[pcAttack[0]][pcAttack[1]];
+            controlGrid.firing(false);
             controlGrid.switchName(getTurn());
-          }, 20);
-          missedPcHits.push([pcAttack[0], pcAttack[1]]);
+            setTimeout(() => {
+              controlGrid.markHit(element, false);
+              setTurn();
+              controlGrid.switchName(getTurn());
+            }, 2000);
+            missedPcHits.push([pcAttack[0], pcAttack[1]]);
+          }, 1000);
         }
       }
     }

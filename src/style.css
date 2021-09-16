@@ -94,7 +94,7 @@ h1 {
   align-items: center;
   font-family: "MyFont", sans-serif;
   color: rgb(57, 90, 119);
-  visibility: hidden;
+  visibility: visible;
 }
 .modal-container-hidden {
   visibility: hidden;
@@ -115,9 +115,9 @@ h1 {
   font-family: "MyFont", sans-serif;
 }
 .currentPlayer {
-  width: 25rem;
+  width: 5rem;
   font-size: 3rem;
-  color: hsl(228, 49%, 18%);
+  color: hsl(228, 100%, 85%);
   margin: 1rem;
 }
 input {
