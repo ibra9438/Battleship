@@ -132,8 +132,10 @@ const gameBoard = (player, pc) => {
       if (getTurn() % 2 === 0) {
         shipsArrPc.forEach((e) => {
           if (e.isHit(y, x) == true) {
+            controlGrid.firing(true);
+
             setTimeout(() => {
-              controlGrid.firing(true);
+              controlGrid.switchName(getTurn());
             }, 1000);
             e.hit(1);
             controlGrid.markHit(a, true);
@@ -142,10 +144,10 @@ const gameBoard = (player, pc) => {
           }
         });
         if (value == false) {
+          controlGrid.firing(true);
           setTimeout(() => {
-            controlGrid.firing(true);
+            controlGrid.markHit(a, false);
           }, 1000);
-          controlGrid.markHit(a, false);
           missedPlayerHits.push([x, y]);
         }
         setTurn();
@@ -167,7 +169,6 @@ const gameBoard = (player, pc) => {
                 controlGrid.switchName(getTurn());
                 allShipsSunk(false);
                 setTurn();
-                controlGrid.switchName(getTurn());
               }, 2000);
               value = true;
             }, 1000);
@@ -177,7 +178,6 @@ const gameBoard = (player, pc) => {
           setTimeout(() => {
             element = playerBoard[pcAttack[0]][pcAttack[1]];
             controlGrid.firing(false);
-            controlGrid.switchName(getTurn());
             setTimeout(() => {
               controlGrid.markHit(element, false);
               setTurn();
